@@ -31,6 +31,27 @@ public class ItemMobIngredient extends ItemBase {
 	public String getUnlocalizedName(ItemStack ist) {
 		return "item.mob_ingredient_" + ist.getItemDamage();
 	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+		if (mobDropsEnabled) {
+			if (LanguageHelper.localizationExists(this.getUnlocalizedNameInefficiently(stack) + ".tooltip")) {
+				LanguageHelper.formatTooltip(this.getUnlocalizedNameInefficiently(stack) + ".tooltip", tooltip);
+			}
+		}
+
+		List<String> detailTooltip = Lists.newArrayList();
+		this.addMoreInformation(stack, world, detailTooltip);
+		if (!detailTooltip.isEmpty()) {
+			tooltip.add("");
+			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+				tooltip.addAll(detailTooltip);
+			} else {
+				tooltip.add(TextFormatting.WHITE + TextFormatting.ITALIC.toString() + I18n.format(Reference.MOD_ID + ".tooltip.shift_for_more_info") + TextFormatting.RESET);
+			}
+		}
+	}
 
 	@Override
 	public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
